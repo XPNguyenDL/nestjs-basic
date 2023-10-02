@@ -8,7 +8,9 @@ import {
     ParseIntPipe,
     HttpException,
     HttpStatus,
-    Body
+    Body,
+    UsePipes,
+    ValidationPipe
 } from '@nestjs/common';
 import { CustomersService } from 'src/customers/services/customers/customers.service';
 import { Request, Response } from 'express';
@@ -54,6 +56,7 @@ export class CustomersController {
     }
 
     @Post('/create')
+    @UsePipes(ValidationPipe)
     createCustomer(@Body() customer: CustomerEditModel, @Res() res: Response) {
         if (customer) {
             this.repo.createCustomer(customer);
