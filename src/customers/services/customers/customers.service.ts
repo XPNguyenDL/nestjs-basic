@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CustomerEditModel } from 'src/customers/controllers/models/customer.Edit';
+import { CustomerEditModel } from 'src/customers/controllers/models/customer.edit';
 import { CustomerDtoModel } from 'src/customers/controllers/models/customer.dto';
 
 @Injectable()
@@ -10,12 +10,20 @@ private users: Array<CustomerDtoModel> = [
         name: "xpnguyen",
         email: "xpnguyen@gmail.com",
         createAt: new Date(),
+        address: {
+            'id': 1,
+            "address": "DaLat"
+        }
     },
     {
         id: 2,
         name: "quyen",
         email: "2115260@dlu.edu.vn",
         createAt: new Date(),
+        address: {
+            'id': 1,
+            "address": "DaLat"
+        }
     }
 ]
 
