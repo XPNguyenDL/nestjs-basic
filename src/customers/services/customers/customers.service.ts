@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { CustomerEditModel } from 'src/customers/controllers/models/customer.Edit';
 
 @Injectable()
 export class CustomersService {
@@ -21,5 +22,9 @@ private users = [
 
     findCustomer(id: number) {
         return this.users.find((user) => user.id === id);
+    }
+
+    createCustomer(customer: CustomerEditModel) {
+        this.users.push(customer);
     }
 }

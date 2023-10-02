@@ -1,6 +1,18 @@
-import { Controller, Get, Param, Req, Res, ParseIntPipe, HttpException, HttpStatus } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Post,
+    Param,
+    Req,
+    Res,
+    ParseIntPipe,
+    HttpException,
+    HttpStatus,
+    Body
+} from '@nestjs/common';
 import { CustomersService } from 'src/customers/services/customers/customers.service';
 import { Request, Response } from 'express';
+import { CustomerEditModel } from '../models/customer.Edit';
 
 @Controller('customers')
 export class CustomersController {
@@ -13,8 +25,8 @@ export class CustomersController {
 
     @Get('/byId/:id')
     getCustomerById(
-        @Param('id', ParseIntPipe) id: number, 
-        @Req() req: Request, 
+        @Param('id', ParseIntPipe) id: number,
+        @Req() req: Request,
         @Res() res: Response) {
         const customer = this.repo.findCustomer(id);
         console.log(customer);
@@ -28,9 +40,10 @@ export class CustomersController {
 
     @Get('/search/:id')
     searchCustomerById(
-        @Param('id', ParseIntPipe) id: number, 
-        @Req() req: Request, 
-        @Res() res: Response) {
+        @Param('id', ParseIntPipe) id: number,
+        @Req() req: Request,
+        @Res() res: Response
+    ) {
         const customer = this.repo.findCustomer(id);
         console.log(customer);
         if (customer) {
@@ -39,4 +52,15 @@ export class CustomersController {
             throw new HttpException('Customer is not exist', HttpStatus.BAD_REQUEST);
         }
     }
+
+    @Post('/create')
+    createCustomer(@Body() customer: CustomerEditModel, @Res() res: Response) {
+        if (customer) {
+            this.repo.createCustomer(customer);
+            res.send(customer);
+        } else {
+            throw new HttpException('Save failed', HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
