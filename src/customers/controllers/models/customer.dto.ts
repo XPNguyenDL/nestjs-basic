@@ -1,5 +1,6 @@
 export class CustomerDtoModel {
     id: number;
     name: string;
-    createAt: Date;
+    email: string;
+    createAt: Date = new Date();
 }
