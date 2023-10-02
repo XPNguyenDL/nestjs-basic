@@ -12,9 +12,11 @@ import {
     UsePipes,
     ValidationPipe
 } from '@nestjs/common';
+import { plainToClass } from 'class-transformer';
 import { CustomersService } from 'src/customers/services/customers/customers.service';
 import { Request, Response } from 'express';
 import { CustomerEditModel } from '../models/customer.Edit';
+import { CustomerDtoModel } from '../models/customer.dto';
 
 @Controller('customers')
 export class CustomersController {
@@ -59,8 +61,10 @@ export class CustomersController {
     @UsePipes(ValidationPipe)
     createCustomer(@Body() customer: CustomerEditModel, @Res() res: Response) {
         if (customer) {
-            this.repo.createCustomer(customer);
-            res.send(customer);
+            const customerDtoData = plainToClass(CustomerDtoModel, customer);
+            this.repo.createCustomer(customerDtoData);
+
+            res.send(customerDtoData);
         } else {
             throw new HttpException('Save failed', HttpStatus.BAD_REQUEST);
         }
