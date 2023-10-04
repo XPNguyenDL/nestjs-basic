@@ -13,8 +13,8 @@ import {
 import { UsersService } from '../services/users.service';
 import { CreateUserDto } from '../models/dto/create-user.dto';
 import { UpdateUserDto } from '../models/dto/update-user.dto';
+import { ApiResponse } from '../models';
 import { Request, Response } from 'express';
-import { ApiResponse } from '../models/api-response';
 
 @Controller('/api/users')
 export class UsersController {
