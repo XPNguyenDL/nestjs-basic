@@ -1,5 +1,4 @@
 import { HttpStatus } from "@nestjs/common";
-import { ApiResponseWithResult } from "./api-response-with-reult";
 
 export class ApiResponse {
     private _Errors: Array<string> = [];
@@ -44,3 +43,13 @@ export class ApiResponse {
     }
 }
 
+export class ApiResponseWithResult<T> extends ApiResponse {
+    public readonly Result: T;
+
+    constructor(statusCode: HttpStatus = HttpStatus.OK, errors: string[] = [], result?: T, isSuccess: boolean = false) {
+        super(statusCode, errors);
+        this.Result = result;
+        this.IsSuccess = isSuccess;
+    }
+
+}
