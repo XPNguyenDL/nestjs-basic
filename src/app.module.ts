@@ -3,13 +3,21 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
 // Import controllers
-import { UsersController } from './controllers';
+import {
+  HomepageController,
+  UsersController
+} from './controllers';
 
 // Import services
 import {
   UsersService
 } from './services';
-import { User, UserSchema } from './core/entities';
+
+// Import entities
+import {
+  User,
+  UserSchema
+} from './core/entities';
 
 @Module({
   imports: [
@@ -26,10 +34,11 @@ import { User, UserSchema } from './core/entities';
     }]),
     ConfigModule.forRoot({
       isGlobal: true,
-    })
+    }),
   ],
   controllers: [
-    UsersController
+    UsersController,
+    HomepageController
   ],
   providers: [
     UsersService
