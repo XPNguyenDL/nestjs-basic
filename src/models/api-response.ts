@@ -1,6 +1,7 @@
 import { HttpStatus } from "@nestjs/common";
+import { ApiResponseWithReult } from "./api-response-with-reult";
 
-export default class ApiResponse {
+export class ApiResponse {
     private _Errors: Array<string> = [];
 
     public IsSuccess: boolean = typeof this.Errors === 'undefined' ? false : this.Errors.length === 0;
@@ -43,13 +44,3 @@ export default class ApiResponse {
     }
 }
 
-export class ApiResponseWithReult<T> extends ApiResponse {
-    public readonly Result: T;
-
-    constructor(statusCode: HttpStatus = HttpStatus.OK, errors: string[] = [], result?: T, isSuccess: boolean = false) {
-        super(statusCode, errors);
-        this.Result = result;
-        this.IsSuccess = isSuccess;
-    }
-
-}
