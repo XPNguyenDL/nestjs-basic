@@ -13,9 +13,9 @@ import {
 import { UsersService } from '../services/users.service';
 import { CreateUserDto } from '../models/dto/create-user.dto';
 import { UpdateUserDto } from '../models/dto/update-user.dto';
-import ApiResponse, { ApiResponseWithReult } from 'src/models/ApiResponse';
 import { User } from 'src/core/entities';
 import { Request, Response, response } from 'express';
+import ApiResponse from 'src/models/apiResponse';
 
 @Controller('/api/users')
 export class UsersController {
