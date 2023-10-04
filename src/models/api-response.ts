@@ -1,5 +1,5 @@
 import { HttpStatus } from "@nestjs/common";
-import { ApiResponseWithReult } from "./api-response-with-reult";
+import { ApiResponseWithResult } from "./api-response-with-reult";
 
 export class ApiResponse {
     private _Errors: Array<string> = [];
@@ -20,12 +20,12 @@ export class ApiResponse {
         this.Errors = new Array<string>();
     }
 
-    static Success<T>(result: T, statusCode: HttpStatus = HttpStatus.OK): ApiResponseWithReult<T> {
-        return new ApiResponseWithReult<T>(statusCode, [], result, true);
+    static Success<T>(result: T, statusCode: HttpStatus = HttpStatus.OK): ApiResponseWithResult<T> {
+        return new ApiResponseWithResult<T>(statusCode, [], result, true);
     }
 
-    static FailWithResult<T>(statusCode: HttpStatus, result: T, ...errorMessages: string[]): ApiResponseWithReult<T> {
-        return new ApiResponseWithReult<T>(statusCode, errorMessages, result, false);
+    static FailWithResult<T>(statusCode: HttpStatus, result: T, ...errorMessages: string[]): ApiResponseWithResult<T> {
+        return new ApiResponseWithResult<T>(statusCode, errorMessages, result, false);
     }
 
     static Fail(statusCode: HttpStatus, ...errorMessages: string[]): ApiResponse {
