@@ -21,18 +21,17 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
-    try {
-      this.usersService.create(createUserDto).then(response => {
-        if (response) {
-          res.status(200).json(ApiResponse.Success(response));
-        } else {
-          res.status(200).json(ApiResponse.Fail(HttpStatus.NOT_FOUND, "User is not found"));
-        }
+  async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
+    await this.usersService.create(createUserDto).then(response => {
+      if (response) {
+        res.status(200).json(ApiResponse.Success(response));
+      } else {
+        res.status(200).json(ApiResponse.Fail(HttpStatus.NOT_FOUND, "User is not found"));
+      }
+    })
+      .catch(error => {
+        res.status(200).json(ApiResponse.Fail(HttpStatus.BAD_REQUEST, error.message));
       });
-    } catch (error) {
-      res.status(200).json(ApiResponse.Fail(HttpStatus.BAD_REQUEST, error.message));
-    }
   }
 
   @Get()
@@ -40,22 +39,23 @@ export class UsersController {
     this.usersService.findAll().then(response => {
       res.status(HttpStatus.OK).json(ApiResponse.Success(response))
     })
-
+      .catch(error => {
+        res.status(200).json(ApiResponse.Fail(HttpStatus.BAD_REQUEST, error.message));
+      });
   }
 
   @Get(':id')
   findOne(@Param('id') id: string, @Res() res: Response) {
-    try {
-      this.usersService.findOne(id).then(response => {
-        if (response) { 
-          res.status(200).json(ApiResponse.Success(response));
-        } else {
-          res.status(200).json(ApiResponse.Fail(HttpStatus.NOT_FOUND, "User is not found"));
-        }
+    this.usersService.findOne(id).then(response => {
+      if (response) {
+        res.status(200).json(ApiResponse.Success(response));
+      } else {
+        res.status(200).json(ApiResponse.Fail(HttpStatus.NOT_FOUND, "User is not found"));
+      }
+    })
+      .catch(error => {
+        res.status(200).json(ApiResponse.Fail(HttpStatus.BAD_REQUEST, error.message));
       });
-    } catch (error) {
-      res.status(200).json(ApiResponse.Fail(HttpStatus.BAD_REQUEST, error.message));
-    }
   }
 
   @Put(':id')

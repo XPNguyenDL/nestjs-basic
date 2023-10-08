@@ -15,6 +15,22 @@ import {
 
 // Import entities
 import {
+  Notification,
+  NotificationSchema,
+  Schedule,
+  ScheduleSchema,
+  Student,
+  StudentSchema,
+  StudentTutorRelationship,
+  StudentTutorRelationshipSchema,
+  Subject,
+  SubjectSchema,
+  Tutor,
+  TutorEvaluation,
+  TutorEvaluationSchema,
+  TutorSchema,
+  TutorSubject,
+  TutorSubjectSchema,
   User,
   UserSchema
 } from './core/entities';
@@ -28,10 +44,17 @@ import {
       }),
       inject: [ConfigService],
     }),
-    MongooseModule.forFeature([{
-      name: User.name,
-      schema: UserSchema
-    }]),
+    MongooseModule.forFeature([
+      {name: User.name, schema: UserSchema},
+      {name: Tutor.name, schema: TutorSchema},
+      {name: Student.name, schema: StudentSchema},
+      {name: Notification.name, schema: NotificationSchema},
+      {name: Schedule.name, schema: ScheduleSchema},
+      {name: StudentTutorRelationship.name, schema: StudentTutorRelationshipSchema},
+      {name: Subject.name, schema: SubjectSchema},
+      {name: TutorEvaluation.name, schema: TutorEvaluationSchema},
+      {name: TutorSubject.name, schema: TutorSubjectSchema}
+    ]),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
