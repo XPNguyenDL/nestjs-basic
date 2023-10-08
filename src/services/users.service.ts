@@ -1,17 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../models/dto/create-user.dto';
 import { UpdateUserDto } from '../models/dto/update-user.dto';
 import { User } from 'src/core/entities';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Error, Model } from 'mongoose';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  create(createUserDto: CreateUserDto) {
-    const createdUser = this.userModel.create(createUserDto);
-    return createdUser;
+  async create(createUserDto: CreateUserDto) {
+    const { email } = createUserDto;
+
+    // Kiểm tra xem email đã tồn tại hay chưa
+    const existingUser = await this.userModel.findOne({ email }).exec();
+    if (existingUser) {
+      throw new Error('Email đã tồn tại.');
+    }
+
+    // Tạo tài khoản mới
+    const createdUser = new this.userModel(createUserDto);
+    return createdUser.save();
   }
 
   findAll() {

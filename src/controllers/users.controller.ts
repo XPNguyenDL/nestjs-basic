@@ -20,7 +20,7 @@ import { Request, Response } from 'express';
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
-  @Post()
+  @Post('signup')
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     await this.usersService.create(createUserDto).then(response => {
       if (response) {
