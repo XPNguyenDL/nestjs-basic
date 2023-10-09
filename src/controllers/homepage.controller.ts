@@ -6,7 +6,7 @@ export class HomepageController {
     @Get()
     getHomepage() {
         return {
-            "title": "Nestjs"
+            "title": "Tutor connect"
         };
     }
 }
