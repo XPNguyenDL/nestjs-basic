@@ -34,6 +34,7 @@ import {
   User,
   UserSchema
 } from './core/entities';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -55,6 +56,10 @@ import {
       {name: TutorEvaluation.name, schema: TutorEvaluationSchema},
       {name: TutorSubject.name, schema: TutorSubjectSchema}
     ]),
+    JwtModule.register({
+      secret: 'tutor-connect-secret-key', // Replace with your actual secret key
+      signOptions: { expiresIn: '1h' }, // Adjust options as needed
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
