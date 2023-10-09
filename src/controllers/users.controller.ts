@@ -17,7 +17,7 @@ import { UpdateUserDto } from '../models/dto/update-user.dto';
 import { ApiResponse } from '../models';
 import { Request, Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth';
 
 @Controller('/api/users')
 @ApiTags('User endpoints')
