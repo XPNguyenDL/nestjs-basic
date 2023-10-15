@@ -12,16 +12,18 @@ import {
     HttpStatus,
     Req,
     UseGuards,
-    UseInterceptors
+    UseInterceptors,
+    Query
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { AuthGuard } from '../auth';
-import { ApiResponse } from '../models';
+import { ApiResponse, UserFilter } from '../models';
 import { UsersService } from '../services/users.service';
 import { CreateUserDto, UserProfileDto } from '../models';
 import { LoginDto } from '../models';
 import { CloudinaryService } from '../media/cloud-file-media-manager';
+import { PaginationResult } from '../core/collections';
 
 @Controller('/api/users')
 @ApiTags('User endpoints')
@@ -30,13 +32,22 @@ export class UsersController {
         private readonly cloudinaryService: CloudinaryService) { }
 
     @Get()
-    findAll(@Res() res: Response) {
-        this.usersService.findAll().then(response => {
-            res.status(HttpStatus.OK).json(ApiResponse.success(response))
-        })
-            .catch(error => {
-                res.status(200).json(ApiResponse.fail(HttpStatus.BAD_REQUEST, error.message));
-            });
+    findAll(@Res() res: Response, @Req() req: Request, @Query() model: UserFilter) {
+        try {
+            const condition = new UserFilter();
+            Object.assign(condition, model);
+
+            this.usersService.findAll(condition.keyword, condition).then(response => {
+                const paginationResult = new PaginationResult(response);
+
+                res.status(HttpStatus.OK).json(ApiResponse.success(paginationResult))
+            })
+                .catch(error => {
+                    res.status(200).json(ApiResponse.fail(HttpStatus.BAD_REQUEST, error.message));
+                });
+        } catch (error) {
+            return res.status(200).json(ApiResponse.fail(HttpStatus.BAD_REQUEST, error.message));
+        }
     }
 
     @Get('byid/:id')
