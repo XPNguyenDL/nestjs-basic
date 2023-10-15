@@ -5,6 +5,8 @@ import { Error, Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../core/entities';
 import { UserProfileDto } from '../models';
+import { IPagingParams } from '../core/contracts';
+import { PagedListExtensions } from './extensions';
 
 @Injectable()
 export class UsersService {
@@ -26,8 +28,20 @@ export class UsersService {
     return createdUser.save();
   }
 
-  findAll() {
-    return this.userModel.find().exec();
+  async findAll(keyword: string, pagingParams: IPagingParams) {
+
+    const searchConditions = {
+      $or: [
+        { email: { $regex: keyword, $options: 'i' } },
+      ],
+    };
+
+    const userList = await this.userModel.find(searchConditions).exec()
+      .catch((error) => {
+        throw new Error(error.message);
+      });
+
+    return PagedListExtensions.toPagedList(userList, pagingParams);
   }
 
   async login(email: string, password: string) {
