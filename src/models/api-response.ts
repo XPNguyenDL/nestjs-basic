@@ -1,33 +1,33 @@
 import { HttpStatus } from "@nestjs/common";
 
 export class ApiResponse {
-    private _Errors: Array<string> = [];
+    private _errors: Array<string> = [];
 
-    public IsSuccess: boolean = typeof this.Errors === 'undefined' ? false : this.Errors.length === 0;
+    public isSuccess: boolean = typeof this.errors === 'undefined' ? false : this.errors.length === 0;
 
 
-    public StatusCode: HttpStatus;
+    public statusCode: HttpStatus;
 
     constructor(statusCode: HttpStatus = HttpStatus.OK, errors: string[] = [], isSuccess: boolean = false) {
-        this.StatusCode = statusCode;
-        this.Errors = errors;
-        this.IsSuccess = isSuccess;
+        this.statusCode = statusCode;
+        this.errors = errors;
+        this.isSuccess = isSuccess;
     }
 
     protected ApiResponse() {
-        this.StatusCode = HttpStatus.OK;
-        this.Errors = new Array<string>();
+        this.statusCode = HttpStatus.OK;
+        this.errors = new Array<string>();
     }
 
-    static Success<T>(result: T, statusCode: HttpStatus = HttpStatus.OK): ApiResponseWithResult<T> {
+    static success<T>(result: T, statusCode: HttpStatus = HttpStatus.OK): ApiResponseWithResult<T> {
         return new ApiResponseWithResult<T>(statusCode, [], result, true);
     }
 
-    static FailWithResult<T>(statusCode: HttpStatus, result: T, ...errorMessages: string[]): ApiResponseWithResult<T> {
+    static failWithResult<T>(statusCode: HttpStatus, result: T, ...errorMessages: string[]): ApiResponseWithResult<T> {
         return new ApiResponseWithResult<T>(statusCode, errorMessages, result, false);
     }
 
-    static Fail(statusCode: HttpStatus, ...errorMessages: string[]): ApiResponse {
+    static fail(statusCode: HttpStatus, ...errorMessages: string[]): ApiResponse {
         if (errorMessages?.length === 0) {
             throw new Error('errorMessages must not be empty.');
         }
@@ -35,21 +35,21 @@ export class ApiResponse {
         return new ApiResponse(statusCode, errorMessages, false);
     }
 
-    public get Errors(): Array<string> {
-        return this._Errors;
+    public get errors(): Array<string> {
+        return this._errors;
     }
-    public set Errors(value: Array<string>) {
-        this._Errors = value;
+    public set errors(value: Array<string>) {
+        this._errors = value;
     }
 }
 
 export class ApiResponseWithResult<T> extends ApiResponse {
-    public readonly Result: T;
+    public readonly result: T;
 
     constructor(statusCode: HttpStatus = HttpStatus.OK, errors: string[] = [], result?: T, isSuccess: boolean = false) {
         super(statusCode, errors);
-        this.Result = result;
-        this.IsSuccess = isSuccess;
+        this.result = result;
+        this.isSuccess = isSuccess;
     }
 
 }
