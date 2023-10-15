@@ -1,10 +1,10 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { CreateUserDto } from '../models/dto/create-user.dto';
-import { UpdateUserDto } from '../models/dto/update-user.dto';
-import { User } from 'src/core/entities';
+import { CreateUserDto } from '../models/user/create-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Error, Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '../core/entities';
+import { UserProfileDto } from '../models';
 
 @Injectable()
 export class UsersService {
@@ -45,11 +45,46 @@ export class UsersService {
     return this.userModel.findOne({ _id: id });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UserProfileDto) {
+    const user = await this.userModel.findOne({ _id: id }).exec();
+
+    if (!user) {
+      // If the user is not found, return null or handle the error accordingly
+      return null;
+    }
+
+    // Update the user's profile with the new data
+    Object.assign(user, updateUserDto);
+
+    // Save the updated user
+    const updatedUser = await user.save();
+
+    return updatedUser;
   }
 
-  remove(id: string) {
-    return this.userModel.deleteOne({ _id: id });
+  async setAvatar(user: User, avatar: string, public_id: string) {
+
+    if (!user) {
+      // If the user is not found, return null or handle the error accordingly
+      return null;
+    }
+
+    const updateUserDto = {
+      avatarUrl: avatar,
+      publicUrl: public_id
+    }
+
+    // Update the user's profile with the new data
+    Object.assign(user, updateUserDto);
+
+    return await user.save();
+  }
+
+  async remove(id: string) {
+    const existingUser = await this.userModel.findOne({ _id: id }).exec();
+    if (!existingUser) {
+      throw new Error('User is deleted.');
+    }
+    return await this.userModel.deleteOne({ _id: id });
   }
 }

@@ -7,7 +7,7 @@ export class Tutor extends Document {
   userId: number;
 
   @Prop({ required: true, maxlength: 1024 })
-  description: string;
+  about: string;
 
   @Prop({ required: true, type: Number })
   hourlyRate: number;

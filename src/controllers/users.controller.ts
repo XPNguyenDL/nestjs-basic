@@ -1,103 +1,161 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Body,
-  Param,
-  Res,
-  HttpStatus,
-  Req,
-  UseGuards
-} from '@nestjs/common';
-import { UsersService } from '../services/users.service';
-import { CreateUserDto } from '../models/dto/create-user.dto';
-import { UpdateUserDto } from '../models/dto/update-user.dto';
-import { ApiResponse } from '../models';
-import { Request, Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
+import { Request, Response } from 'express';
+import {
+    Controller,
+    Get,
+    Post,
+    Put,
+    Delete,
+    Body,
+    Param,
+    Res,
+    HttpStatus,
+    Req,
+    UseGuards,
+    UseInterceptors
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+
 import { AuthGuard } from '../auth';
+import { ApiResponse } from '../models';
+import { UsersService } from '../services/users.service';
+import { CreateUserDto, UserProfileDto } from '../models';
+import { LoginDto } from '../models';
+import { CloudinaryService } from '../media/cloud-file-media-manager';
 
 @Controller('/api/users')
 @ApiTags('User endpoints')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+    constructor(private readonly usersService: UsersService,
+        private readonly cloudinaryService: CloudinaryService) { }
 
-  @Get()
-  findAll(@Res() res: Response) {
-    this.usersService.findAll().then(response => {
-      res.status(HttpStatus.OK).json(ApiResponse.Success(response))
-    })
-      .catch(error => {
-        res.status(200).json(ApiResponse.Fail(HttpStatus.BAD_REQUEST, error.message));
-      });
-  }
+    @Get()
+    findAll(@Res() res: Response) {
+        this.usersService.findAll().then(response => {
+            res.status(HttpStatus.OK).json(ApiResponse.success(response))
+        })
+            .catch(error => {
+                res.status(200).json(ApiResponse.fail(HttpStatus.BAD_REQUEST, error.message));
+            });
+    }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string, @Res() res: Response) {
-  //   this.usersService.findOne(id).then(response => {
-  //     if (response) {
-  //       res.status(200).json(ApiResponse.Success(response));
-  //     } else {
-  //       res.status(200).json(ApiResponse.Fail(HttpStatus.NOT_FOUND, "User is not found"));
-  //     }
-  //   })
-  //     .catch(error => {
-  //       res.status(200).json(ApiResponse.Fail(HttpStatus.BAD_REQUEST, error.message));
-  //     });
-  // }
+    @Get('byid/:id')
+    findOne(@Param('id') id: string, @Res() res: Response) {
+        this.usersService.findOne(id).then(response => {
+            if (response) {
+                res.status(200).json(ApiResponse.success(response));
+            } else {
+                res.status(200).json(ApiResponse.fail(HttpStatus.NOT_FOUND, "User is not found"));
+            }
+        })
+            .catch(error => {
+                res.status(200).json(ApiResponse.fail(HttpStatus.BAD_REQUEST, error.message));
+            });
+    }
 
-  @UseGuards(AuthGuard)
-  @Get('profile')
-  async getProfile(@Req() req, @Res() res: Response) {
-    const userData = req.user;
-    await this.usersService.findOne(userData.sub).then((response) => {
-      if (response) {
-        res.status(200).json(ApiResponse.Success(response));
-      } else {
-        res.status(200).json(ApiResponse.Fail(HttpStatus.NOT_FOUND, "User is not found"));
-      }
-    })
-  }
-  
-  @Post('register')
-  async register(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
-    await this.usersService.create(createUserDto).then(response => {
-      if (response) {
-        res.status(200).json(ApiResponse.Success(response));
-      } else {
-        res.status(200).json(ApiResponse.Fail(HttpStatus.NOT_FOUND, "User is not found"));
-      }
-    })
-      .catch(error => {
-        res.status(200).json(ApiResponse.Fail(HttpStatus.BAD_REQUEST, error.message));
-      });
-  }
+    @UseGuards(AuthGuard)
+    @Get('profile')
+    async getProfile(@Req() req, @Res() res: Response) {
+        const userData = req.user;
+        await this.usersService.findOne(userData.sub).then((response) => {
+            if (response) {
+                res.status(200).json(ApiResponse.success(response));
+            } else {
+                res.status(200).json(ApiResponse.fail(HttpStatus.NOT_FOUND, "User is not found"));
+            }
+        })
+    }
 
-  @Post('login')
-  async login(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
-    const { email, password } = createUserDto;
+    @Post('register')
+    async register(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
+        await this.usersService.create(createUserDto).then((response) => {
+            if (response) {
+                res.status(200).json(ApiResponse.success(response));
+            } else {
+                res.status(200).json(ApiResponse.fail(HttpStatus.NOT_FOUND, "User is not found"));
+            }
+        })
+            .catch((error) => {
+                res.status(200).json(ApiResponse.fail(HttpStatus.BAD_REQUEST, error.message));
+            });
+    }
 
-    await this.usersService.login(email, password).then(response => {
-      if (response) {
-        res.status(200).json(ApiResponse.Success(response));
-      } else {
-        res.status(200).json(ApiResponse.Fail(HttpStatus.NOT_FOUND, "User is not found"));
-      }
-    })
-      .catch(error => {
-        res.status(200).json(ApiResponse.Fail(HttpStatus.BAD_REQUEST, error.message));
-      });
-  }
+    @Post('login')
+    async login(@Body() loginDto: LoginDto, @Res() res: Response) {
+        const { email, password } = loginDto;
 
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
+        await this.usersService.login(email, password).then(response => {
+            if (response) {
+                res.status(200).json(ApiResponse.success(response));
+            } else {
+                res.status(200).json(ApiResponse.fail(HttpStatus.NOT_FOUND, "User is not found"));
+            }
+        })
+            .catch(error => {
+                res.status(200).json(ApiResponse.fail(HttpStatus.BAD_REQUEST, error.message));
+            });
+    }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
-  }
+    @UseGuards(AuthGuard)
+    @Post('setAvatar')
+    @UseInterceptors(FileInterceptor('file'))
+    async setAvatar(@Req() req, @Res() res: Response) {
+        const identity = req.user;
+        const image = req.file as Express.Multer.File;
+        const folderPath = 'uploads';
+
+        const user = await this.usersService.findOne(identity.sub);
+
+        if (user.avatarUrl) {
+            this.cloudinaryService.deleteImage([user.publicUrl]).catch((err) => {
+                res.status(200).json(ApiResponse.fail(HttpStatus.BAD_REQUEST, err.message));
+            });
+        }
+
+        const { secure_url, public_id } = await this.cloudinaryService.uploadImage(image, folderPath);
+        this.usersService.setAvatar(user, secure_url, public_id)
+            .then((data) => {
+                if (data) {
+                    res.status(200).json(ApiResponse.success(data));
+                } else {
+                    res.status(200).json(ApiResponse.fail(HttpStatus.NOT_FOUND, "User is not found"));
+                }
+            })
+            .catch((err) => {
+                res.status(200).json(ApiResponse.fail(HttpStatus.BAD_REQUEST, err.message));
+            });
+    }
+
+    @UseGuards(AuthGuard)
+    @Put('updateProfile/')
+    async update(
+        @Body() updateUserDto: UserProfileDto,
+        @Req() req,
+        @Res() res: Response) {
+        const userData = req.user;
+        return await this.usersService.update(userData.sub, updateUserDto).then(response => {
+            if (response) {
+                res.status(200).json(ApiResponse.success(response));
+            } else {
+                res.status(200).json(ApiResponse.fail(HttpStatus.NOT_FOUND, "User is not found"));
+            }
+        })
+            .catch(error => {
+                res.status(200).json(ApiResponse.fail(HttpStatus.BAD_REQUEST, error.message));
+            });
+    }
+
+    @Delete(':id')
+    async remove(@Param('id') id: string, @Res() res: Response) {
+        await this.usersService.remove(id).then((response) => {
+            if (response) {
+                res.status(200).json(ApiResponse.success(response));
+            } else {
+                res.status(200).json(ApiResponse.fail(HttpStatus.NOT_FOUND, "User is not found"));
+            }
+        })
+            .catch((error) => {
+                res.status(200).json(ApiResponse.fail(HttpStatus.BAD_REQUEST, error.message));
+            });
+    }
 }
