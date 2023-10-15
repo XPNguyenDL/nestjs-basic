@@ -10,10 +10,10 @@ export class User extends Document {
     @Prop({ required: true, maxlength: 255 })
     email: string;
 
-    @Prop({ required: true, default: '' })
+    @Prop({ default: '' })
     avatarUrl: string;
 
-    @Prop({ required: true, default: '' })
+    @Prop({ default: '' })
     publicUrl: string;
 
     @Prop({ maxlength: 255, isRequired: true, default: '' })
