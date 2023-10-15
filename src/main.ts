@@ -10,6 +10,17 @@ async function bootstrap() {
     .setTitle('Tutor connect')
     .setDescription('Tutor connect API description')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'APIKey',
+        name: 'APIKey',
+        description: 'Enter API Key (bearer {token})',
+        in: 'header',
+      },
+      'APIKey-auth', 
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
