@@ -35,6 +35,7 @@ import {
   UserSchema
 } from './core/entities';
 import { JwtModule } from '@nestjs/jwt';
+import { CloudinaryService } from './media/cloud-file-media-manager';
 
 @Module({
   imports: [
@@ -66,10 +67,11 @@ import { JwtModule } from '@nestjs/jwt';
   ],
   controllers: [
     UsersController,
-    HomepageController
+    HomepageController,
   ],
   providers: [
-    UsersService
+    UsersService,
+    CloudinaryService
   ],
 })
 export class AppModule { }
