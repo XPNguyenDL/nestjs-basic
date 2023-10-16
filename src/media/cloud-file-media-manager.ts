@@ -5,7 +5,6 @@ import { v2 as cloudinary } from 'cloudinary';
 @Injectable()
 export class CloudinaryService {
   constructor(private configService: ConfigService) {
-    // Configure Cloudinary (you can set this up in your constructor or as an environment variable)
     cloudinary.config({
       cloud_name: this.configService.get<string>('cloud_name'),
       api_key: this.configService.get<string>('api_key'),
