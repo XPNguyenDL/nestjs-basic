@@ -17,6 +17,10 @@ async function bootstrap() {
 
   // app.enableCors(corsOptions);
 
+  app.enableCors({
+    origin: false,
+  });
+  
   const config = new DocumentBuilder()
     .setTitle('Tutor connect')
     .setDescription('Tutor connect API description')
