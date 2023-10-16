@@ -16,8 +16,12 @@ async function bootstrap() {
 
   app.enableCors({
     allowedHeaders: '*',
-    origin: '*',
+    origin: [
+      'http://localhost:8100'
+    ],
   });
+
+  
 
   const config = new DocumentBuilder()
     .setTitle('Tutor connect')
