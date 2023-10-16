@@ -8,14 +8,14 @@ import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.int
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  const corsOptions: CorsOptions = {
-    origin: '*', // You can set specific origins here, e.g., 'https://example.com'
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: '*',
+  // const corsOptions: CorsOptions = {
+  //   origin: '*', // You can set specific origins here, e.g., 'https://example.com'
+  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  //   allowedHeaders: '*',
 
-  };
+  // };
 
-  app.enableCors(corsOptions);
+  // app.enableCors(corsOptions);
 
   const config = new DocumentBuilder()
     .setTitle('Tutor connect')

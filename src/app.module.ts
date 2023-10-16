@@ -76,9 +76,9 @@ import { CorsMiddleware } from './middlewares/cors.middleware';
   ],
 })
 export class AppModule { 
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(CorsMiddleware)
-      .forRoutes({ path: '*', method: RequestMethod.ALL });
-  }
+  // configure(consumer: MiddlewareConsumer) {
+  //   consumer
+  //     .apply(CorsMiddleware)
+  //     .forRoutes({ path: '*', method: RequestMethod.ALL });
+  // }
 }
