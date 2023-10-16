@@ -30,13 +30,13 @@ export class UsersService {
     createdUser.save();
 
     const userDto = new UserDto(createdUser);
-    
+
     const payload = { sub: createdUser._id, username: createdUser.email };
 
     const access_token = {
       access_token: await this.jwtService.signAsync(payload),
     }
-    
+
     Object.assign(userDto, access_token);
 
     return userDto;
@@ -69,12 +69,12 @@ export class UsersService {
       throw new NotFoundException('Password is incorrect');
     }
     const userDto = new UserDto(user);
-    
+
     const payload = { sub: user._id, username: user.email };
     const access_token = {
       access_token: await this.jwtService.signAsync(payload),
     }
-    
+
     Object.assign(userDto, access_token);
 
     return userDto;
@@ -98,7 +98,17 @@ export class UsersService {
     // Save the updated user
     const updatedUser = await user.save();
 
-    return updatedUser;
+    const userDto = new UserDto(updatedUser);
+
+    const payload = { sub: updatedUser._id, username: updatedUser.email };
+
+    const access_token = {
+      access_token: await this.jwtService.signAsync(payload),
+    }
+
+    Object.assign(userDto, access_token);
+
+    return userDto;
   }
 
   async setAvatar(user: User, avatar: string, public_id: string) {
@@ -115,8 +125,9 @@ export class UsersService {
 
     // Update the user's profile with the new data
     Object.assign(user, updateUserDto);
-
-    return await user.save();
+    await user.save();
+    const userDto = new UserDto(user);
+    return userDto;
   }
 
   async remove(id: string) {
