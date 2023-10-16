@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from '../models/user/create-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Error, Model } from 'mongoose';
@@ -46,8 +46,13 @@ export class UsersService {
 
   async login(email: string, password: string) {
     const user = await this.userModel.findOne({ email: email });
+
+    if (!user) {
+      throw new NotFoundException('Email is incorrect');
+    }
+
     if (user?.password !== password) {
-      throw new UnauthorizedException();
+      throw new NotFoundException('Password is incorrect');
     }
     const payload = { sub: user._id, username: user.email };
     return {
@@ -64,7 +69,7 @@ export class UsersService {
 
     if (!user) {
       // If the user is not found, return null or handle the error accordingly
-      return null;
+      throw new NotFoundException('User is not found');
     }
 
     // Update the user's profile with the new data
