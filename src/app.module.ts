@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
@@ -36,6 +36,7 @@ import {
 } from './core/entities';
 import { JwtModule } from '@nestjs/jwt';
 import { CloudinaryService } from './media/cloud-file-media-manager';
+import { CorsMiddleware } from './middlewares/cors.middleware';
 
 @Module({
   imports: [
@@ -74,4 +75,10 @@ import { CloudinaryService } from './media/cloud-file-media-manager';
     CloudinaryService
   ],
 })
-export class AppModule { }
+export class AppModule { 
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(CorsMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}
