@@ -86,11 +86,11 @@ export class UsersController {
                 res.status(200).json(ApiResponse.fail(HttpStatus.NOT_FOUND, "User is not found"));
             }
         })
-            .catch((error) => {
-                res.status(200).json(ApiResponse.fail(HttpStatus.BAD_REQUEST, error.message));
-            });
+        .catch((error) => {
+            res.status(200).json(ApiResponse.fail(HttpStatus.BAD_REQUEST, error.message));
+        });
     }
-
+    
     @Post('login')
     async login(@Body() loginDto: LoginDto, @Res() res: Response) {
         const { email, password } = loginDto;

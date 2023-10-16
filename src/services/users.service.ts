@@ -1,10 +1,10 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from '../models/user/create-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Error, Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../core/entities';
-import { UserProfileDto } from '../models';
+import { UserDto, UserProfileDto } from '../models';
 import { IPagingParams } from '../core/contracts';
 import { PagedListExtensions } from './extensions';
 
@@ -20,12 +20,29 @@ export class UsersService {
     // Kiểm tra xem email đã tồn tại hay chưa
     const existingUser = await this.userModel.findOne({ email }).exec();
     if (existingUser) {
-      throw new Error('Email đã tồn tại.');
+      throw new Error('Email is existed');
     }
 
-    // Tạo tài khoản mới
     const createdUser = new this.userModel(createUserDto);
-    return createdUser.save();
+
+    createdUser.save().catch((err) => {
+      throw new Error(err.message);
+    });
+    
+    const user = await this.userModel.findOne({ email: email });
+
+    const userDto = new UserDto(user);
+    
+    const payload = { sub: user._id, username: user.email };
+
+    const access_token = {
+      access_token: await this.jwtService.signAsync(payload),
+    }
+    
+    Object.assign(userDto, access_token);
+    console.log(userDto);
+
+    return userDto;
   }
 
   async findAll(keyword: string, pagingParams: IPagingParams) {
@@ -46,13 +63,24 @@ export class UsersService {
 
   async login(email: string, password: string) {
     const user = await this.userModel.findOne({ email: email });
-    if (user?.password !== password) {
-      throw new UnauthorizedException();
+
+    if (!user) {
+      throw new NotFoundException('Email is incorrect');
     }
+
+    if (user?.password !== password) {
+      throw new NotFoundException('Password is incorrect');
+    }
+    const userDto = new UserDto(user);
+    
     const payload = { sub: user._id, username: user.email };
-    return {
+    const access_token = {
       access_token: await this.jwtService.signAsync(payload),
-    };
+    }
+    
+    Object.assign(userDto, access_token);
+
+    return userDto;
   }
 
   findOne(id: string) {
@@ -64,7 +92,7 @@ export class UsersService {
 
     if (!user) {
       // If the user is not found, return null or handle the error accordingly
-      return null;
+      throw new NotFoundException('User is not found');
     }
 
     // Update the user's profile with the new data

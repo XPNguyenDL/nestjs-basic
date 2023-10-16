@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common';
+import {  Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { JwtModule } from '@nestjs/jwt';
 
 // Import controllers
 import {
@@ -33,8 +34,8 @@ import {
   TutorSubjectSchema,
   User,
   UserSchema
-} from './core/entities';
-import { JwtModule } from '@nestjs/jwt';
+} from './core';
+
 import { CloudinaryService } from './media/cloud-file-media-manager';
 
 @Module({
