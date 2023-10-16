@@ -11,8 +11,8 @@ async function bootstrap() {
   const corsOptions: CorsOptions = {
     origin: '*', // You can set specific origins here, e.g., 'https://example.com'
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Accept',
-    credentials: false, // Allow cookies and credentials in requests
+    allowedHeaders: '*',
+
   };
 
   app.enableCors(corsOptions);
