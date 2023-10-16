@@ -79,6 +79,7 @@ export class UsersController {
 
     @Post('register')
     async register(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
+        res.header('Access-Control-Allow-Origin', '*')
         await this.usersService.create(createUserDto).then((response) => {
             if (response) {
                 res.status(200).json(ApiResponse.success(response));
@@ -86,13 +87,14 @@ export class UsersController {
                 res.status(200).json(ApiResponse.fail(HttpStatus.NOT_FOUND, "User is not found"));
             }
         })
-            .catch((error) => {
-                res.status(200).json(ApiResponse.fail(HttpStatus.BAD_REQUEST, error.message));
-            });
+        .catch((error) => {
+            res.status(200).json(ApiResponse.fail(HttpStatus.BAD_REQUEST, error.message));
+        });
     }
-
+    
     @Post('login')
     async login(@Body() loginDto: LoginDto, @Res() res: Response) {
+        res.header('Access-Control-Allow-Origin', '*')
         const { email, password } = loginDto;
 
         await this.usersService.login(email, password).then(response => {
