@@ -20,7 +20,7 @@ export class UsersService {
     // Kiểm tra xem email đã tồn tại hay chưa
     const existingUser = await this.userModel.findOne({ email }).exec();
     if (existingUser) {
-      throw new Error('Email đã tồn tại.');
+      throw new Error('Email is existed');
     }
 
     // Tạo tài khoản mới
