@@ -25,13 +25,13 @@ export class UsersService {
 
     const createdUser = new this.userModel(createUserDto);
 
-    createdUser.save();
-    
-    const user = await this.userModel.findOne({ email: email });
+    createdUser.joinedDate = new Date();
 
-    const userDto = new UserDto(user);
+    createdUser.save();
+
+    const userDto = new UserDto(createdUser);
     
-    const payload = { sub: user._id, username: user.email };
+    const payload = { sub: createdUser._id, username: createdUser.email };
 
     const access_token = {
       access_token: await this.jwtService.signAsync(payload),
