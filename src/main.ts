@@ -3,24 +3,16 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // const corsOptions: CorsOptions = {
-  //   origin: '*', // You can set specific origins here, e.g., 'https://example.com'
-  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  //   allowedHeaders: '*',
-
-  // };
-
-  // app.enableCors(corsOptions);
-
   app.enableCors({
-    origin: false,
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Accept',
   });
-  
+
   const config = new DocumentBuilder()
     .setTitle('Tutor connect')
     .setDescription('Tutor connect API description')
