@@ -25,9 +25,7 @@ export class UsersService {
 
     const createdUser = new this.userModel(createUserDto);
 
-    createdUser.save().catch((err) => {
-      throw new Error(err.message);
-    });
+    createdUser.save();
     
     const user = await this.userModel.findOne({ email: email });
 
@@ -40,7 +38,6 @@ export class UsersService {
     }
     
     Object.assign(userDto, access_token);
-    console.log(userDto);
 
     return userDto;
   }
