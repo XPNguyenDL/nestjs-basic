@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Error, Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../core/entities';
-import { UserProfileDto } from '../models';
+import { UserDto, UserProfileDto } from '../models';
 import { IPagingParams } from '../core/contracts';
 import { PagedListExtensions } from './extensions';
 
@@ -23,9 +23,26 @@ export class UsersService {
       throw new Error('Email is existed');
     }
 
-    // Tạo tài khoản mới
     const createdUser = new this.userModel(createUserDto);
-    return createdUser.save();
+
+    createdUser.save().catch((err) => {
+      throw new Error(err.message);
+    });
+    
+    const user = await this.userModel.findOne({ email: email });
+
+    const userDto = new UserDto(user);
+    
+    const payload = { sub: user._id, username: user.email };
+
+    const access_token = {
+      access_token: await this.jwtService.signAsync(payload),
+    }
+    
+    Object.assign(userDto, access_token);
+    console.log(userDto);
+
+    return userDto;
   }
 
   async findAll(keyword: string, pagingParams: IPagingParams) {
@@ -54,10 +71,16 @@ export class UsersService {
     if (user?.password !== password) {
       throw new NotFoundException('Password is incorrect');
     }
+    const userDto = new UserDto(user);
+    
     const payload = { sub: user._id, username: user.email };
-    return {
+    const access_token = {
       access_token: await this.jwtService.signAsync(payload),
-    };
+    }
+    
+    Object.assign(userDto, access_token);
+
+    return userDto;
   }
 
   findOne(id: string) {
