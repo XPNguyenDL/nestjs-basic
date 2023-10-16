@@ -12,7 +12,7 @@ async function bootstrap() {
     origin: '*', // You can set specific origins here, e.g., 'https://example.com'
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type, Accept',
-    credentials: true, // Allow cookies and credentials in requests
+    credentials: false, // Allow cookies and credentials in requests
   };
 
   app.enableCors(corsOptions);
