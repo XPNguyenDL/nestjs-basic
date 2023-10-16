@@ -19,8 +19,11 @@ export class User extends Document {
     @Prop({ maxlength: 255, isRequired: true, default: '' })
     fullname: string;
 
-    @Prop({ default: new Date()})
+    @Prop()
     birthday: Date;
+
+    @Prop({ default: new Date()})
+    joinedDate: Date;
 
     @Prop({ maxlength: 50, default: ''})
     phone: string;
